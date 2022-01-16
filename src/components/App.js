@@ -9,7 +9,7 @@ const App = () => {
   const [body, setBody] = useState("");
 
   const addEvent = (e) => {
-    e.preventDefault();
+    e.preventDefault(); //画面がリロードされないようにする
 
     dispatch({
       type: "CREATE_EVENT",
@@ -21,9 +21,11 @@ const App = () => {
   };
 
   const deleteAll = (e) => {
-    e.preventDefault();
-
-    dispatch({ type: "DELETE_ALL_EVENT" });
+    e.preventDefault(); //画面がリロードされないようにする
+    const result = window.confirm(
+      "全てのイベントを本当に削除しても良いですか？"
+    );
+    result && dispatch({ type: "DELETE_ALL_EVENT" });
   };
 
   return (
@@ -41,7 +43,6 @@ const App = () => {
             }}
           />
         </div>
-
         <div className="form-group">
           <label htmlFor="formEventBody">ボディー</label>
           <textarea
@@ -51,14 +52,22 @@ const App = () => {
             onChange={(e) => setBody(e.target.value)}
           />
         </div>
-
-        <button type="button" className="btn btn-primary" onClick={addEvent}>
+        <button
+          disabled={!title || !body}
+          type="button"
+          className="btn btn-primary"
+          onClick={addEvent}
+        >
           イベントを作成する
         </button>
-        <button type="button" className="btn btn-danger" onClick={deleteAll}>
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={deleteAll}
+          disabled={state.length === 0}
+        >
           全てのイベントを削除する
         </button>
-
         <h4>イベント一覧</h4>
         <table className="table table-hover">
           <thead>
@@ -71,9 +80,8 @@ const App = () => {
           </thead>
           <tbody>
             {state.map((event, index) => (
-              <Event key={index} event={event} dispatch={dispatch}/>
+              <Event key={index} event={event} dispatch={dispatch} />
             ))}
-            
           </tbody>
         </table>
       </form>
